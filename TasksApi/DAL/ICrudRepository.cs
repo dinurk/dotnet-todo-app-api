@@ -4,11 +4,11 @@ namespace TasksApi.DAL
 {
     public interface ICrudRepository<T>
     {
-        Task<IEnumerable<T>> GetAll();
+        Task<T> Create(T entry);
+        Task<T> Update(T entry);
+        Task Delete(T entry);
         Task<T?> GetById(int id);
-        Task<T> Create(T todoTask);
-        Task<T> Update(T todoTask);
-        Task Delete(int todoTaskId);
+        Task<IEnumerable<T>> GetAll();
         Task<Boolean> Exists(int id);
     }
 }

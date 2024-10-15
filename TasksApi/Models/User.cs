@@ -1,4 +1,6 @@
-﻿namespace TasksApi.Models
+﻿using Microsoft.Extensions.Hosting;
+
+namespace TasksApi.Models
 {
     public class User : BaseEntity
     {
@@ -10,5 +12,7 @@
 
         /** Пароль пользователя */
         public string Password { get; set; }
+
+        public ICollection<TodoTask> TodoTasks { get; }
     }
 }

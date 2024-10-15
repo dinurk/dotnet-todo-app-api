@@ -12,5 +12,9 @@ namespace TasksApi.Models
 
         /** Задача была выполнена */
         public bool IsComplete { get; set; }
+
+        /** Пользователь, создавший задачу */
+        public int CreatorId { get; set; }
+        public User Creator { get; set; }
     }
 }

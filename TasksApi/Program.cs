@@ -1,15 +1,16 @@
 using TasksApi.Models;
 using TasksApi.DAL;
+using TasksApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
 
-builder.AddNpgsqlDbContext<TodoTaskContext>("myconnection");
-builder.AddNpgsqlDbContext<UserContext>("myconnection");
+builder.AddNpgsqlDbContext<AppDbContext>("myconnection");
 
 builder.Services.AddScoped<TodoTaskRepository>();
+builder.Services.AddScoped<TodoTaskService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

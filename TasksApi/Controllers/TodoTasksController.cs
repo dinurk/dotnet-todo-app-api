@@ -2,6 +2,7 @@
 using TasksApi.DAL;
 using TasksApi.Exceptions;
 using TasksApi.Models;
+using TasksApi.Services;
 
 namespace TasksApi.Controllers
 {
@@ -9,25 +10,25 @@ namespace TasksApi.Controllers
     [ApiController]
     public class TodoTasksController : ControllerBase
     {
-        private readonly ICrudRepository<TodoTask> _repository;
+        private readonly ICrudService<TodoTask> _service;
 
-        public TodoTasksController(TodoTaskRepository repository)
+        public TodoTasksController(TodoTaskService service)
         {
-            _repository = repository;
+            _service = service;
         }
 
         // GET: api/TodoTasks
         [HttpGet]
         public async Task<IActionResult> GetTodoTasks()
         {
-            return Ok(await _repository.GetAll());
+            return Ok(await _service.GetAll());
         }
 
         // GET: api/TodoTasks/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTodoTask(int id)
         {
-            var todoTask = await _repository.GetById(id);
+            var todoTask = await _service.GetById(id);
 
             if (todoTask == null)
             {
@@ -42,7 +43,7 @@ namespace TasksApi.Controllers
         [HttpPost]
         public async Task<ActionResult<TodoTask>> PostTodoTask(TodoTask todoTask)
         {
-            await _repository.Create(todoTask);
+            await _service.Create(todoTask);
 
             return CreatedAtAction(nameof(GetTodoTask), new { id = todoTask.Id }, todoTask);
         }
@@ -59,7 +60,7 @@ namespace TasksApi.Controllers
 
             try
             {
-                await _repository.Update(todoTask);
+                await _service.Update(todoTask);
             }
             catch (NotFoundException)
             {
@@ -75,7 +76,7 @@ namespace TasksApi.Controllers
         {
             try
             {
-                await _repository.Delete(id);
+                await _service.Delete(id);
             }
             catch (NotFoundException)
             {

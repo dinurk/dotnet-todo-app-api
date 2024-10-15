@@ -5,11 +5,13 @@ using TasksApi.Models;
 
 namespace TasksApi.DAL
 {
-    public abstract class BaseCrudRepository<T> : ICrudRepository<T> where T : BaseEntity
+    public abstract class BaseCrudRepository<T, V> : ICrudRepository<T>
+        where T : BaseEntity
+        where V : DbContext
     {
         private readonly DbContext _context;
 
-        public BaseCrudRepository(DbContext context)
+        public BaseCrudRepository(V context)
         {
             _context = context;
         }
@@ -23,41 +25,14 @@ namespace TasksApi.DAL
 
         public async Task<T> Update(T entry)
         {
-            const int maxAttemptCount = 3;
-            Exception? lastException = null;
-            for (int attempted = 0; attempted < maxAttemptCount; attempted++)
-            {
-                if (!await Exists(entry.Id))
-                {
-                    throw new NotFoundException();
-                }
+            _context.Entry(entry).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
 
-                try
-                {
-                    _context.Entry(entry).State = EntityState.Modified;
-                    await _context.SaveChangesAsync();
-                }
-                catch (Exception ex)
-                {
-                    lastException = ex;
-                }
-            }
-
-            if (lastException != null)
-            {
-                throw lastException;
-            }
             return entry;
         }
 
-        public async Task Delete(int id)
+        public async Task Delete(T entry)
         {
-            var entry = await _context.FindAsync(typeof(T), id);
-            if (entry == null)
-            {
-                throw new NotFoundException();
-            }
-
             _context.Remove(entry);
             await _context.SaveChangesAsync();
         }
@@ -67,17 +42,12 @@ namespace TasksApi.DAL
             return await _context.FindAsync(typeof(T), id) as T;
         }
 
-        public V GetContext<V>() where V : DbContext
+        public V GetContext()
         {
-            if (_context is not V)
-            {
-                throw new ArgumentException();
-            }
             return _context as V;
         }
 
         public abstract Task<IEnumerable<T>> GetAll();
-
         public abstract Task<bool> Exists(int id);
     }
 }
