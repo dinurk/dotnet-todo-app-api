@@ -45,7 +45,10 @@ namespace TasksApi.Controllers
         {
             await _service.Create(todoTask);
 
-            return CreatedAtAction(nameof(GetTodoTask), new { id = todoTask.Id }, todoTask);
+            return CreatedAtAction(
+                nameof(PostTodoTask), 
+                new { id = todoTask.Id }, todoTask
+            );
         }
 
         // PUT: api/TodoTasks/5
