@@ -1,7 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System.Configuration;
-using System.Reflection.Metadata;
 
 namespace TasksApi.Models
 {

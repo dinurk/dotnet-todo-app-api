@@ -1,39 +1,38 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TasksApi.DAL;
+﻿using TasksApi.DAL.Abstract;
 using TasksApi.Exceptions;
 using TasksApi.Models;
 
 namespace TasksApi.Services
 {
-    public abstract class BaseCrudService<T> : ICrudService<T>
-           where T : BaseEntity
+    public abstract class BaseCrudService<TEntity> : ICrudService<TEntity>
+           where TEntity : BaseEntity
     {
-        private readonly ICrudRepository<T> _repository;
+        private readonly ICrudRepository<TEntity> _repository;
 
-        public BaseCrudService(ICrudRepository<T> repository)
+        public BaseCrudService(ICrudRepository<TEntity> repository)
         {
             _repository = repository;
         }
 
-        public async Task<T> Create(T entry)
+        public async Task<TEntity> CreateAsync(TEntity entry)
         {
-            return await _repository.Create(entry);
+            return await _repository.CreateAsync(entry);
         }
 
-        public async Task<T> Update(T entry)
+        public async Task<TEntity> UpdateAsync(TEntity entry)
         {
             const int maxAttemptCount = 3;
             Exception? lastException = null;
             for (int attempted = 0; attempted < maxAttemptCount; attempted++)
             {
-                if (!await _repository.Exists(entry.Id))
+                if (!await _repository.ExistsAsync(entry.Id))
                 {
                     throw new NotFoundException();
                 }
 
                 try
                 {
-                    return await _repository.Update(entry);
+                    return await _repository.UpdateAsync(entry);
                 }
                 catch (Exception ex)
                 {
@@ -48,30 +47,36 @@ namespace TasksApi.Services
             return entry;
         }
 
-        public async Task Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            var entry = await _repository.GetById(id);
+            var entry = await _repository.GetByIdAsync(id);
             if (entry == null)
             {
                 throw new NotFoundException();
             }
 
-            await _repository.Delete(entry);
+            await _repository.DeleteAsync(entry);
         }
 
-        public async Task<T?> GetById(int id)
+        public async Task<TEntity?> GetByIdAsync(int id)
         {
-            return await _repository.GetById(id);
+            return await _repository.GetByIdAsync(id);
         }
 
-        public Task<IEnumerable<T>> GetAll()
+        public Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return _repository.GetAll();
+            return _repository.GetAllAsync();
         }
 
-        public Task<bool> Exists(int id)
+        public Task<bool> ExistsAsync(int id)
         {
-            return _repository.Exists(id);
+            return _repository.ExistsAsync(id);
+        }
+
+        public TRepository GetRepository<TRepository>() 
+            where TRepository : BaseCrudRepository<TEntity>
+        {
+            return _repository as TRepository;
         }
     }
 }

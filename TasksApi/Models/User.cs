@@ -4,13 +4,19 @@ namespace TasksApi.Models
 {
     public class User : BaseEntity
     {
-        /** Имя пользователя */
+        /// <summary>
+        /// Имя пользователя 
+        /// </summary>
         public string Name { get; set; }
 
-        /** Email пользователя */
+        /// <summary>
+        /// Email пользователя 
+        /// </summary>
         public string Email { get; set; }
 
-        /** Пароль пользователя */
+        /// <summary>
+        /// Пароль пользователя 
+        /// </summary>
         public string Password { get; set; }
 
         public ICollection<TodoTask> TodoTasks { get; }

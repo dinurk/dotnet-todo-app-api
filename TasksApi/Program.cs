@@ -16,7 +16,8 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<UserService>();
 
 builder.Services.AddAutoMapper(
-    typeof(UserMappingProfile)
+    typeof(UserMappingProfile),
+    typeof(TodoTaskMappingProfile)
 );
 
 builder.Services.AddEndpointsApiExplorer();

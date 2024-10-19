@@ -7,5 +7,11 @@ namespace TasksApi.Services
     {
         public TodoTaskService(TodoTaskRepository repository)
             : base(repository) { }
+
+        public async Task<IEnumerable<TodoTask>> GetByCreatorId(int creatorId)
+        {
+            return await GetRepository<TodoTaskRepository>()
+                .GetByCreatorIdAsync(creatorId);
+        }
     }
 }

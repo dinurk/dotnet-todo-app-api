@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using TasksApi.Models;
+using TasksApi.DTO.User;
 
 namespace TasksApi.DTO.Mappings
 {
@@ -7,8 +7,8 @@ namespace TasksApi.DTO.Mappings
     {
         public UserMappingProfile()
         {
-            CreateMap<CreateUserDto, User>();
-            CreateMap<User, UserDto>();
+            CreateMap<CreateUserDto, Models.User>();
+            CreateMap<Models.User, UserDto>();
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using TasksApi.DAL;
-using TasksApi.Exceptions;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using TasksApi.Controllers.Abstract;
+using TasksApi.DTO.QueryParams;
+using TasksApi.DTO.TodoTask;
 using TasksApi.Models;
 using TasksApi.Services;
 
@@ -8,85 +10,43 @@ namespace TasksApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TodoTasksController : ControllerBase
+    public class TodoTasksController
+        : BaseCrudController<TodoTask, TodoTaskDto, CreateTodoTaskDto, UpdateTodoTaskDto, TodoTaskQueryParams>
     {
-        private readonly ICrudService<TodoTask> _service;
 
-        public TodoTasksController(TodoTaskService service)
+        private readonly UserService _userService;
+        public TodoTasksController(
+            UserService userService,
+            TodoTaskService service,
+            IMapper mapper
+        ) : base(service, mapper)
         {
-            _service = service;
+            _userService = userService;
         }
 
-        // GET: api/TodoTasks
+        // GET: api/TodoTasks?creatorId=<creatorId>
         [HttpGet]
-        public async Task<IActionResult> GetTodoTasks()
+        public override async Task<IActionResult> GetAll(
+            [FromQuery] TodoTaskQueryParams queryParams
+        )
         {
-            return Ok(await _service.GetAll());
-        }
-
-        // GET: api/TodoTasks/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetTodoTask(int id)
-        {
-            var todoTask = await _service.GetById(id);
-
-            if (todoTask == null)
+            if (queryParams.CreatorId == null)
             {
-                return NotFound();
+                return await base.GetAll(queryParams);
             }
 
-            return Ok(todoTask);
-        }
+            if (!await _userService.ExistsAsync((int)queryParams.CreatorId))
+            {
+                return NotFound($"Пользователь с id {queryParams.CreatorId} не был найден");
+            }
 
-        // POST: api/TodoTasks
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<TodoTask>> PostTodoTask(TodoTask todoTask)
-        {
-            await _service.Create(todoTask);
+            var todoTasks = await GetService<TodoTaskService>().GetByCreatorId((int)queryParams.CreatorId);
 
-            return CreatedAtAction(
-                nameof(PostTodoTask), 
-                new { id = todoTask.Id }, todoTask
+            return Ok(
+                todoTasks.Select(
+                    todoTask => _mapper.Map<TodoTaskDto>(todoTask)
+                )
             );
-        }
-
-        // PUT: api/TodoTasks/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTodoTask(int id, TodoTask todoTask)
-        {
-            if (id != todoTask.Id)
-            {
-                return BadRequest();
-            }
-
-            try
-            {
-                await _service.Update(todoTask);
-            }
-            catch (NotFoundException)
-            {
-                return NotFound();
-            }
-
-            return Ok();
-        }
-
-        // DELETE: api/TodoTasks/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTodoTask(int id)
-        {
-            try
-            {
-                await _service.Delete(id);
-            }
-            catch (NotFoundException)
-            {
-                return NotFound();
-            }
-
-            return Ok();
         }
     }
 }

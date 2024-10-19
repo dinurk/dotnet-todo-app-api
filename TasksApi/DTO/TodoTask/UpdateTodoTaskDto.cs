@@ -1,9 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using TasksApi.Models;
 
-namespace TasksApi.Models
+namespace TasksApi.DTO.TodoTask
 {
-    public class TodoTask : BaseEntity
+    public class UpdateTodoTaskDto : BaseEntity
     {
+
+        /// <summary>
+        /// Статус завершения задачи
+        /// </summary>
+        public bool IsComplete { get; set; }
+
         /// <summary>
         /// Наименование задачи
         /// </summary>
@@ -15,14 +21,8 @@ namespace TasksApi.Models
         public DateTime Deadline { get; set; }
 
         /// <summary>
-        /// Статус завершенности задачи
-        /// </summary>
-        public bool IsComplete { get; set; }
-
-        /// <summary>
         /// Id пользователя, создавшего задачу
         /// </summary>
         public int CreatorId { get; set; }
-        public User Creator { get; set; }
     }
 }
