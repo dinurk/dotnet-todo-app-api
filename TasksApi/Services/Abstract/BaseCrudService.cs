@@ -2,7 +2,7 @@
 using TasksApi.Exceptions;
 using TasksApi.Models;
 
-namespace TasksApi.Services
+namespace TasksApi.Services.Abstract
 {
     public abstract class BaseCrudService<TEntity> : ICrudService<TEntity>
            where TEntity : BaseEntity
@@ -73,7 +73,7 @@ namespace TasksApi.Services
             return _repository.ExistsAsync(id);
         }
 
-        public TRepository GetRepository<TRepository>() 
+        public TRepository GetRepository<TRepository>()
             where TRepository : BaseCrudRepository<TEntity>
         {
             return _repository as TRepository;

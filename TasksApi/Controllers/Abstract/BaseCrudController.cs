@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TasksApi.Exceptions;
 using TasksApi.Models;
-using TasksApi.Services;
+using TasksApi.Services.Abstract;
 
 namespace TasksApi.Controllers.Abstract
 {

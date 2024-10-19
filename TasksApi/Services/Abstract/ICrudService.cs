@@ -1,6 +1,6 @@
 ﻿using TasksApi.Models;
 
-namespace TasksApi.Services
+namespace TasksApi.Services.Abstract
 {
     public interface ICrudService<TEntity> where TEntity : BaseEntity
     {
